@@ -19,6 +19,19 @@ function App() {
 			<Header />
 			<div className='query-container'>
 				<form onSubmit={onSubmit}>
+					<label>Select Query to Run</label>
+					<select
+						onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+							setSelectQuery(e.target.value);
+							setSQLQuery(Query[e.target.value]);
+						}}
+						value={selectQuery}
+					>
+						<option value='students'>Students</option>
+						<option value='products'>Products</option>
+						<option value='orders'>Orders</option>
+						<option value='customers'>Customers</option>
+					</select>
 					<textarea
 						placeholder='Enter your SQL Query'
 						value={sqlQuery}
@@ -27,21 +40,9 @@ function App() {
 						}
 					/>
 					<button className='btn' type='submit'>
-						Run
+						Run Query
 					</button>
 				</form>
-				<select
-					onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-						setSelectQuery(e.target.value);
-						setSQLQuery(Query[e.target.value]);
-					}}
-					value={selectQuery}
-				>
-					<option value='students'>Students</option>
-					<option value='products'>Products</option>
-					<option value='orders'>Orders</option>
-					<option value='customers'>Customers</option>
-				</select>
 			</div>
 			<div className='result-container'>
 				{data.length > 0 && <Table data={data} />}

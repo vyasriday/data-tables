@@ -1,12 +1,13 @@
 .table-container {
   display: flex;
+  position: relative;
   flex-direction: column;
   padding: 0 12px;
   input {
     align-self: flex-end;
     font-size: 16px;
     width: 250px;
-    height: 24px;
+    height: 32px;
     padding-left: 2px;
   }
   table {
@@ -36,10 +37,22 @@
         color: white;
       }
   }
-
+  .table-controls {
+    display: flex;
+    position: sticky;
+    flex-direction: row;
+    justify-content: center;
+    &>.pagination {
+      margin-right: 16px;
+      display: flex;
+      
+      &>button {
+        margin: 0 8px;
+      }
+    }
+  }
   .pagination {
     align-self: center;
-    position: fixed;
   }
 }
 
