@@ -1,8 +1,9 @@
 {
-  "name": "data-visualize",
+  "name": "data-tables",
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "homepage": "https://vyasriday.github.io/data-tables",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
