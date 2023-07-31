@@ -1,0 +1,27 @@
+textarea {
+  outline: none;
+  font-size: 16px;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+}
+.query-container {
+  display: flex;
+
+  & > form {
+    display: flex;
+    flex-direction: column;
+    
+  }
+}
+
+
+.btn {
+  font-size: 16px;
+  outline: none;
+  border-radius: 4px;
+  background-color: skyblue;
+  padding: 4px;
+}

@@ -1,35 +1,53 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.scss";
+import { useState } from "react";
+import Header from "./components/header/Header";
+import { query as Query } from "./data/query.js";
+import { results as Results, ResultItem } from "./data/results.js";
+import Table from "./components/table";
 
 function App() {
-  const [count, setCount] = useState(0)
+	const [selectQuery, setSelectQuery] = useState<string>("students");
+	const [sqlQuery, setSQLQuery] = useState<string>(Query[selectQuery]);
+	const [data, setData] = useState<ResultItem[]>(Results[selectQuery]);
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+	function onSubmit(e: React.FormEvent) {
+		e.preventDefault();
+		setData(Results[selectQuery]);
+	}
+	return (
+		<div className='main'>
+			<Header />
+			<div className='query-container'>
+				<form onSubmit={onSubmit}>
+					<textarea
+						placeholder='Enter your SQL Query'
+						value={sqlQuery}
+						onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+							setSQLQuery(e.target.value)
+						}
+					/>
+					<button className='btn' type='submit'>
+						Run
+					</button>
+				</form>
+				<select
+					onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+						setSelectQuery(e.target.value);
+						setSQLQuery(Query[e.target.value]);
+					}}
+					value={selectQuery}
+				>
+					<option value='students'>Students</option>
+					<option value='products'>Products</option>
+					<option value='orders'>Orders</option>
+					<option value='customers'>Customers</option>
+				</select>
+			</div>
+			<div className='result-container'>
+				{data.length > 0 && <Table data={data} />}
+			</div>
+		</div>
+	);
 }
 
-export default App
+export default App;
