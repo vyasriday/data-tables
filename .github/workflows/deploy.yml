@@ -1,22 +1,28 @@
-name: deploy
+name: Deploy to GitHub Pages
+
 on:
   push:
     branches:
-      - "main"
+      - main
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v2
-      - name: npm install
-        run: npm ci
-        working-directory: $pwd
-      - name: build
-        run: npm run build
-        working-directory: $pwd
-      - name: deploy to gh-pages
-        uses: JamesIves/github-pages-deploy-action@v4.4.3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          branch: gh-pages
-          folder: $pwd/build
+          node-version: "16.x" # Change this to your desired Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        run: npm run deploy
