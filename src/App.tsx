@@ -5,8 +5,15 @@ import { query as Query } from "./data/query.js";
 import { results as Results, ResultItem } from "./data/results.js";
 import Table from "./components/table";
 
+const QueryOptions = [
+	{ name: "Products", value: "products" },
+	{ name: "Orders", value: "orders" },
+	{ name: "Customers", value: "customers" },
+	{ name: "Students", value: "students" },
+];
+
 function App() {
-	const [selectQuery, setSelectQuery] = useState<string>("students");
+	const [selectQuery, setSelectQuery] = useState<string>("products");
 	const [sqlQuery, setSQLQuery] = useState<string>(Query[selectQuery]);
 	const [data, setData] = useState<ResultItem[]>(Results[selectQuery]);
 
@@ -27,10 +34,11 @@ function App() {
 						}}
 						value={selectQuery}
 					>
-						<option value='students'>Students</option>
-						<option value='products'>Products</option>
-						<option value='orders'>Orders</option>
-						<option value='customers'>Customers</option>
+						{QueryOptions.map((option, index) => (
+							<option key={index} value={option.value}>
+								{option.name}
+							</option>
+						))}
 					</select>
 					<textarea
 						placeholder='Enter your SQL Query'

@@ -11,6 +11,8 @@ import { useVirtual } from "react-virtual";
 import "./table.scss";
 import { ResultItem } from "../../data/results";
 
+const pageSizeOptions = [10, 100, 500];
+
 type IProps = {
 	data: ResultItem[];
 };
@@ -80,7 +82,7 @@ const Table = ({ data }: IProps) => {
 						className='btn'
 						onClick={() => table.setPageIndex(table.getPageCount() - 1)}
 					>
-						{table.getPageCount() - 1}
+						{table.getPageCount()}
 					</button>
 					<select
 						value={pageSize}
@@ -89,9 +91,9 @@ const Table = ({ data }: IProps) => {
 							table.setPageSize(Number(e.target.value));
 						}}
 					>
-						<option value={10}>10</option>
-						<option value={100}>100</option>
-						<option value={500}>500</option>
+						{pageSizeOptions.map((option) => (
+							<option value={option}>{option}</option>
+						))}
 						<option value={data.length}>All rows</option>
 					</select>
 				</div>
