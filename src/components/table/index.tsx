@@ -43,7 +43,6 @@ const Table = ({ data }: IProps) => {
 	});
 
 	const { rows } = table.getRowModel();
-
 	// react-virtual
 	const rowVirtualizer = useVirtual({
 		parentRef: tableContainerRef,
