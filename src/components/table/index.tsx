@@ -5,7 +5,8 @@ import {
 	getFilteredRowModel,
 	flexRender,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useState, useRef, useMemo } from "react";
+import { useVirtual } from "react-virtual";
 
 import "./table.scss";
 import { ResultItem } from "../../data/results";
@@ -16,14 +17,19 @@ type IProps = {
 
 const Table = ({ data }: IProps) => {
 	const [filter, setFilter] = useState<string>("");
-	const [pageSize, setPageSize] = useState(10);
-	// building headers
-	const headers = Object.keys(data[0]);
-	const columns = headers.map((header) => ({
-		header: header.toUpperCase(),
-		accessorKey: header,
-	}));
+	const [pageSize, setPageSize] = useState(50);
+	const tableContainerRef = useRef<HTMLDivElement>(null);
 
+	// building columns
+	const columns = useMemo(() => {
+		const headers = Object.keys(data[0]);
+		return headers.map((header) => ({
+			header: header.toUpperCase(),
+			accessorKey: header,
+		}));
+	}, [data]);
+
+	// react-table instance
 	const table = useReactTable({
 		data,
 		columns,
@@ -35,6 +41,20 @@ const Table = ({ data }: IProps) => {
 		},
 		onGlobalFilterChange: setFilter,
 	});
+
+	const { rows } = table.getRowModel();
+
+	// react-virtual
+	const rowVirtualizer = useVirtual({
+		parentRef: tableContainerRef,
+		size: rows.length,
+	});
+
+	const { virtualItems, totalSize } = rowVirtualizer;
+	const paddingTop =
+		virtualItems?.length > 0 ? virtualItems?.[0]?.start || 0 : 0;
+	const paddingBottom =
+		virtualItems?.length > 0 ? totalSize - (virtualItems?.at(-1)?.end || 0) : 0;
 
 	return (
 		<div className='table-container'>
@@ -82,38 +102,58 @@ const Table = ({ data }: IProps) => {
 					placeholder='Search data in table'
 					onChange={(e) => setFilter(e.target.value)}
 				/>
-				{/* <p className='total-records'>Total Records: {data.length}</p> */}
+				<p className='total-records'>Total Records: {data?.length}</p>
 			</div>
-			<table>
-				<thead>
-					{table.getHeaderGroups().map((headerGroup) => (
-						<tr key={headerGroup.id}>
-							{headerGroup.headers.map((header) => (
-								<th
-									key={header.id}
-									onClick={() => header.column.getToggleSortingHandler()}
-								>
-									{flexRender(
-										header.column.columnDef.header,
-										header.getContext()
-									)}
-								</th>
-							))}
-						</tr>
-					))}
-				</thead>
-				<tbody>
-					{table.getRowModel().rows.map((row) => (
-						<tr key={row.id}>
-							{row.getVisibleCells().map((cell) => (
-								<td key={cell.id}>
-									{flexRender(cell.column.columnDef.cell, cell.getContext())}
-								</td>
-							))}
-						</tr>
-					))}
-				</tbody>
-			</table>
+			<div className='table' ref={tableContainerRef}>
+				<table>
+					<thead>
+						{table.getHeaderGroups().map((headerGroup) => (
+							<tr key={headerGroup.id}>
+								{headerGroup.headers.map((header) => (
+									<th
+										key={header.id}
+										onClick={() => header.column.getToggleSortingHandler()}
+									>
+										{flexRender(
+											header.column.columnDef.header,
+											header.getContext()
+										)}
+									</th>
+								))}
+							</tr>
+						))}
+					</thead>
+					<tbody>
+						{paddingTop > 0 && (
+							<tr>
+								<td style={{ height: paddingTop }} />
+							</tr>
+						)}
+						{virtualItems.map((virtualRow) => {
+							const row = rows[virtualRow.index];
+							return (
+								<tr key={row.id}>
+									{row.getVisibleCells().map((cell) => {
+										return (
+											<td key={cell.id}>
+												{flexRender(
+													cell.column.columnDef.cell,
+													cell.getContext()
+												)}
+											</td>
+										);
+									})}
+								</tr>
+							);
+						})}
+						{paddingBottom > 0 && (
+							<tr className='last'>
+								<td style={{ height: paddingBottom }} />
+							</tr>
+						)}
+					</tbody>
+				</table>
+			</div>
 		</div>
 	);
 };
