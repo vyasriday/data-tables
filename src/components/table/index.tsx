@@ -101,7 +101,6 @@ const Table = ({ data }: IProps) => {
 					placeholder='Search data in table'
 					onChange={(e) => setFilter(e.target.value)}
 				/>
-				<p className='total-records'>Total Records: {data?.length}</p>
 			</div>
 			<div className='table' ref={tableContainerRef}>
 				<table>
@@ -152,6 +151,7 @@ const Table = ({ data }: IProps) => {
 						)}
 					</tbody>
 				</table>
+				<p className='total-records'>Total Records: {data?.length}</p>
 			</div>
 		</div>
 	);
